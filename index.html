@@ -2,278 +2,665 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Berpikir Komputasional</title>
-    <!-- FontAwesome untuk Ikon -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Library Supabase -->
+    <!-- SDK Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+
         :root {
-            --primary-color: #4CAF50;
-            --hover-color: #45a049;
-            --bg-color: #f4f7f6;
+            --primary: #00B4D8;
+            --primary-dark: #0077B6;
+            --secondary: #FFD166;
+            --accent: #EF476F;
+            --success: #06D6A0;
+            --bg: #F8F9FA;
+            --text: #2B2D42;
+            --gray: #8D99AE;
+            --white: #FFFFFF;
+            --nav-height: 65px;
         }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
+
+        * {
+            box-sizing: border-box;
             margin: 0;
-            padding: 20px;
-            color: #333;
+            padding: 0;
+            font-family: 'Nunito', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        h1, h2, h3 {
-            text-align: center;
-            color: var(--primary-color);
-        }
-        /* Style Login */
-        #login-section {
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            max-width: 400px;
-            margin: 0 auto;
         }
-        input, select, button {
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
+
+        /* Header */
+        header {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 15px 20px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 800;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 10;
         }
-        button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-        button:hover {
-            background-color: var(--hover-color);
-        }
-        /* Style Tabs */
-        .tabs {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .tab-btn {
-            background-color: #e0e0e0;
-            color: #333;
+
+        /* Main Content Area */
+        main {
             flex: 1;
+            overflow-y: auto;
+            padding-bottom: calc(var(--nav-height) + 20px);
+            position: relative;
         }
-        .tab-btn.active {
-            background-color: var(--primary-color);
-            color: white;
-        }
+
         .tab-content {
             display: none;
-            animation: fadeIn 0.5s;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
         }
-        .tab-content.active {
-            display: block;
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Bottom Navigation */
+        nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: var(--nav-height);
+            background: var(--white);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            z-index: 100;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 33.33%;
+            height: 100%;
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 700;
+            transition: all 0.2s;
+            cursor: pointer;
         }
-        /* Style Kuis */
-        .question {
+
+        .nav-item i { font-size: 1.4rem; margin-bottom: 4px; transition: transform 0.2s; }
+        .nav-item.active { color: var(--primary); }
+        .nav-item.active i { transform: scale(1.2); color: var(--primary); }
+        
+        /* Interactive Elements */
+        .btn {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            min-height: 44px;
+            min-width: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.1s, background-color 0.2s;
+            box-shadow: 0 4px 0 var(--primary-dark);
+            width: 100%;
             margin-bottom: 15px;
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid var(--primary-color);
         }
-        .question p { margin-top: 0; font-weight: bold; }
-        .question label { display: block; margin-bottom: 8px; cursor: pointer; }
-        #loading { text-align: center; color: #666; font-style: italic; display: none; margin-top: 10px; }
+        .btn:active { transform: translateY(4px); box-shadow: 0 0 0 var(--primary-dark); }
+        .btn-secondary { background-color: var(--secondary); color: var(--text); box-shadow: 0 4px 0 #E0A800; }
+        .btn-secondary:active { box-shadow: 0 0 0 #E0A800; }
+
+        /* Accordion (Materi) */
+        .accordion { margin-bottom: 15px; background: var(--white); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .accordion-header {
+            padding: 15px; background: var(--white); font-weight: 700; font-size: 1.1rem;
+            display: flex; justify-content: space-between; align-items: center; cursor: pointer;
+            min-height: 44px;
+        }
+        .accordion-header i { color: var(--primary); transition: transform 0.3s; }
+        .accordion-header.active i { transform: rotate(180deg); }
+        .accordion-body { padding: 0 15px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; font-size: 0.95rem; line-height: 1.5; color: #444; }
+        .accordion-body p { margin-bottom: 15px; }
+        .badge { background: var(--secondary); padding: 3px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 800; color: var(--text); margin-right: 5px; }
+
+        /* Games Grid */
+        .game-category-title { margin: 20px 0 10px; font-size: 1.2rem; color: var(--primary-dark); }
+        .games-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .game-card {
+            background: var(--white); border-radius: 12px; padding: 15px; text-align: center;
+            box-shadow: 0 4px 0 var(--gray); cursor: pointer; transition: transform 0.1s; min-height: 100px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative;
+        }
+        .game-card:active { transform: translateY(4px); box-shadow: 0 0 0 var(--gray); }
+        .game-card i { font-size: 2rem; color: var(--primary); margin-bottom: 10px; }
+        .game-card.locked { opacity: 0.6; pointer-events: none; }
+        .game-card.locked i { color: var(--gray); }
+        .game-card .lvl { font-size: 0.8rem; font-weight: 800; color: var(--gray); }
+        
+        /* Game Modal & Identity Modal */
+        #game-modal, #identity-modal {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: var(--bg); z-index: 200; display: none; flex-direction: column;
+        }
+        #identity-modal { z-index: 300; display: flex; justify-content: center; align-items: center; padding: 20px; background: rgba(0,0,0,0.5); }
+        .identity-box { background: white; padding: 25px; border-radius: 16px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .identity-box input, .identity-box select { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid var(--gray); border-radius: 8px; font-size: 1rem; }
+        
+        #game-modal.active { display: flex; animation: fadeIn 0.2s; }
+        .modal-header { background: var(--primary); color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; font-weight: bold;}
+        .modal-body { padding: 20px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-items: center;}
+        .close-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; min-width: 44px; min-height: 44px; }
+        
+        .game-instruction { font-size: 1.1rem; text-align: center; margin-bottom: 20px; font-weight: 700;}
+        .game-workspace { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; width: 100%; margin-bottom: 20px; }
+        .game-item {
+            background: var(--white); padding: 10px 15px; border-radius: 8px; border: 2px solid var(--primary);
+            font-weight: 700; cursor: pointer; min-height: 44px; display: flex; align-items: center; justify-content: center; text-align: center; flex: 1 1 40%;
+        }
+        .game-item.selected { background: var(--primary); color: white; }
+        .game-item.correct { background: var(--success); border-color: var(--success); color: white; }
+        .game-item.wrong { background: var(--accent); border-color: var(--accent); color: white; }
+        #game-status { font-size: 1.2rem; font-weight: bold; text-align: center; margin-bottom: 15px; min-height: 30px;}
+
+        /* Quiz */
+        .quiz-container { display: flex; flex-direction: column; height: 100%; }
+        .quiz-header { display: flex; justify-content: space-between; font-weight: 800; margin-bottom: 20px; color: var(--gray); }
+        .quiz-question { font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; line-height: 1.4; }
+        .quiz-options { display: flex; flex-direction: column; gap: 12px; }
+        .quiz-option {
+            background: var(--white); border: 2px solid var(--gray); border-radius: 12px; padding: 15px;
+            font-size: 0.95rem; font-weight: 600; text-align: left; cursor: pointer; min-height: 44px; transition: 0.2s;
+        }
+        .quiz-option.correct { background: var(--success); border-color: var(--success); color: white; }
+        .quiz-option.wrong { background: var(--accent); border-color: var(--accent); color: white; }
+        
+        #quiz-result { display: none; text-align: center; padding-top: 30px; }
+        .score-circle { width: 120px; height: 120px; border-radius: 50%; background: var(--secondary); display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: 800; margin: 0 auto 20px; color: var(--text); border: 5px solid var(--white); box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <!-- BAGIAN 1: FORM LOGIN SISWA -->
-    <div id="login-section">
-        <h1><i class="fa-solid fa-graduation-cap"></i> Selamat Datang!</h1>
-        <p style="text-align: center;">Silakan isi data diri sebelum mulai belajar.</p>
-        <input type="text" id="namaSiswa" placeholder="Masukkan Nama Lengkap" required>
-        <select id="kelasSiswa">
-            <option value="">-- Pilih Kelas --</option>
-            <option value="Kelas 7A">Kelas 7A</option>
-            <option value="Kelas 7B">Kelas 7B</option>
-            <option value="Kelas 7C">Kelas 7C</option>
-        </select>
-        <button type="button" onclick="mulaiBelajar()"><i class="fa-solid fa-play"></i> Mulai Belajar</button>
-    </div>
-
-    <!-- BAGIAN 2: KONTEN UTAMA (Disembunyikan sebelum login) -->
-    <div id="main-content" style="display: none;">
-        <h2>Modul: Berpikir Komputasional</h2>
-        <p style="text-align: center;">Halo, <span id="displayNama" style="font-weight:bold;"></span> dari <span id="displayKelas" style="font-weight:bold;"></span>!</p>
-        
-        <!-- Navigasi Tab -->
-        <div class="tabs">
-            <button class="tab-btn active" onclick="openTab(event, 'materi')"><i class="fa-solid fa-book"></i> Materi</button>
-            <button class="tab-btn" onclick="openTab(event, 'game')"><i class="fa-solid fa-gamepad"></i> Game</button>
-            <button class="tab-btn" onclick="openTab(event, 'kuis')"><i class="fa-solid fa-pen-to-square"></i> Kuis</button>
-        </div>
-
-        <!-- Konten Materi -->
-        <div id="materi" class="tab-content active">
-            <h3><i class="fa-solid fa-book-open"></i> Pengenalan Berpikir Komputasional</h3>
-            <p>Berpikir komputasional adalah metode menyelesaikan persoalan dengan menerapkan teknik ilmu komputer (informatika). Terdapat 4 fondasi utama:</p>
-            <ul>
-                <li><strong>Dekomposisi:</strong> Memecah masalah besar menjadi bagian kecil.</li>
-                <li><strong>Pengenalan Pola:</strong> Mencari kesamaan bentuk atau pola dari masalah.</li>
-                <li><strong>Abstraksi:</strong> Fokus pada informasi penting dan mengabaikan yang tidak relevan.</li>
-                <li><strong>Algoritma:</strong> Menyusun langkah-langkah terurut untuk menyelesaikan masalah.</li>
-            </ul>
-        </div>
-
-        <!-- Konten Game -->
-        <div id="game" class="tab-content">
-            <h3><i class="fa-solid fa-puzzle-piece"></i> Mini Game</h3>
-            <p>Susunlah algoritma sederhana! Anggap kamu sedang membuat teh manis. Manakah langkah pertama yang paling tepat?</p>
-            <button onclick="alert('Coba lagi! Ingat langkah paling awal.')">Menuangkan Gula</button>
-            <button onclick="alert('Tepat sekali! Ini adalah langkah pertama dari algoritma membuat teh.')">Menyiapkan Gelas dan Air Panas</button>
-            <button onclick="alert('Coba lagi! Airnya belum siap lho.')">Mengaduk Teh</button>
-        </div>
-
-        <!-- Konten Kuis -->
-        <div id="kuis" class="tab-content">
-            <h3><i class="fa-solid fa-list-check"></i> Uji Pemahamanmu</h3>
-            <form id="quizForm">
-                <div class="question">
-                    <p>1. Proses memecah masalah besar menjadi bagian-bagian kecil yang lebih mudah diselesaikan disebut...</p>
-                    <label><input type="radio" name="q1" value="50"> Dekomposisi</label>
-                    <label><input type="radio" name="q1" value="0"> Abstraksi</label>
-                    <label><input type="radio" name="q1" value="0"> Algoritma</label>
-                </div>
-                <div class="question">
-                    <p>2. Menyusun langkah-langkah yang berurutan dan logis untuk menyelesaikan masalah disebut...</p>
-                    <label><input type="radio" name="q2" value="50"> Algoritma</label>
-                    <label><input type="radio" name="q2" value="0"> Pengenalan Pola</label>
-                    <label><input type="radio" name="q2" value="0"> Dekomposisi</label>
-                </div>
-                <button type="button" onclick="submitKuis()"><i class="fa-solid fa-paper-plane"></i> Kirim Jawaban</button>
-                <div id="loading">Sedang mengirim nilai ke database...</div>
-            </form>
+    <!-- Modal Identitas Siswa -->
+    <div id="identity-modal">
+        <div class="identity-box">
+            <h2 style="text-align: center; color: var(--primary); margin-bottom: 15px;"><i class="fas fa-user-graduate"></i> Data Siswa</h2>
+            <p style="text-align: center; margin-bottom: 15px; font-size: 0.9rem; color: var(--gray);">Isi data diri sebelum belajar & kuis</p>
+            <input type="text" id="namaSiswa" placeholder="Nama Lengkap" required>
+            <select id="kelasSiswa">
+                <option value="">-- Pilih Kelas --</option>
+                <option value="Kelas 7A">Kelas 7A</option>
+                <option value="Kelas 7B">Kelas 7B</option>
+                <option value="Kelas 7C">Kelas 7C</option>
+            </select>
+            <button class="btn" onclick="simpanIdentitas()">Mulai Belajar</button>
         </div>
     </div>
-</div>
 
-<script>
-    // ==========================================
-    // 1. KONFIGURASI SUPABASE
-    // ==========================================
+    <header>
+        Berpikir Komputasional
+    </header>
+
+    <main>
+        <!-- TAB 1: MATERI -->
+        <section id="tab-materi" class="tab-content active">
+            <p style="margin-bottom: 15px; text-align: center;">Halo, <b id="user-display">Siswa</b>!</p>
+            <h2 style="margin-bottom: 15px; font-size: 1.3rem;">Pilar Berpikir Komputasional</h2>
+            
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span><span class="badge">1</span> Dekomposisi</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="accordion-body">
+                    <br>
+                    <p><b>Dekomposisi</b> adalah memecah masalah besar atau kompleks menjadi bagian-bagian yang lebih kecil agar lebih mudah diselesaikan.</p>
+                    <p><b>💡 Contoh LKS:</b> Memecah tugas proyek perpustakaan menjadi: mengurus data buku, pendaftaran anggota, dan sistem peminjaman.</p>
+                    <p><b>🏠 Contoh Sehari-hari:</b> Tugas "membersihkan kamar" dipecah menjadi: menyapu lantai, merapikan kasur, dan mengelap meja.</p>
+                </div>
+            </div>
+
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span><span class="badge">2</span> Pengenalan Pola</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="accordion-body">
+                    <br>
+                    <p><b>Pengenalan Pola</b> adalah mencari kesamaan, tren, atau keteraturan di dalam masalah untuk membuat prediksi atau solusi cepat.</p>
+                    <p><b>💡 Contoh LKS:</b> Dokter mendiagnosis penyakit pasien baru berdasarkan gejala yang mirip dengan pasien-pasien sebelumnya.</p>
+                    <p><b>🏠 Contoh Sehari-hari:</b> Kamu tahu bus akan tiba jam 07.15 karena polanya bus selalu datang setiap 15 menit.</p>
+                </div>
+            </div>
+
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span><span class="badge">3</span> Abstraksi</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="accordion-body">
+                    <br>
+                    <p><b>Abstraksi</b> adalah fokus pada informasi yang penting saja dan mengabaikan detail yang tidak relevan (tidak penting).</p>
+                    <p><b>💡 Contoh LKS:</b> Saat mengerjakan soal matematika, kamu mengabaikan warna baju Budi dan hanya fokus pada jumlah apel yang dibeli.</p>
+                    <p><b>🏠 Contoh Sehari-hari:</b> Saat melihat peta rute angkot, kamu hanya melihat garis jalan, tanpa perlu tahu letak pohon atau warna rumah di pinggir jalan.</p>
+                </div>
+            </div>
+
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span><span class="badge">4</span> Algoritma</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="accordion-body">
+                    <br>
+                    <p><b>Algoritma</b> adalah menyusun langkah-langkah yang terurut dan logis untuk menyelesaikan masalah.</p>
+                    <p><b>💡 Contoh LKS:</b> Langkah menyalakan komputer: (1) Sambung kabel, (2) Tekan tombol Power monitor, (3) Tekan Power CPU, (4) Tunggu proses booting.</p>
+                    <p><b>🏠 Contoh Sehari-hari:</b> Langkah memasak mie instan dari merebus air, memasukkan mie, hingga menuang bumbu di piring.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: GAMES -->
+        <section id="tab-games" class="tab-content">
+            <p style="margin-bottom: 10px; color: var(--gray); font-size: 0.9rem; text-align: center;">Selesaikan game secara berurutan untuk membuka level berikutnya!</p>
+            <div id="games-container"></div>
+        </section>
+
+        <!-- TAB 3: LATIHAN SOAL -->
+        <section id="tab-soal" class="tab-content">
+            <div id="quiz-area" class="quiz-container">
+                <div class="quiz-header">
+                    <span>Soal: <span id="q-current">1</span>/20</span>
+                    <span>Skor: <span id="q-score">0</span></span>
+                </div>
+                <div class="quiz-question" id="q-text">Pertanyaan akan muncul di sini...</div>
+                <div class="quiz-options" id="q-options"></div>
+            </div>
+            
+            <div id="quiz-result">
+                <h2>Latihan Selesai!</h2>
+                <p style="margin: 10px 0 20px; color: var(--gray);">Nilai Akhir Kamu:</p>
+                <div class="score-circle" id="final-score">0</div>
+                <p id="score-message" style="font-weight: 700; margin-bottom: 15px;"></p>
+                <p id="save-status" style="font-style: italic; color: var(--gray); margin-bottom: 20px;"></p>
+                <button class="btn" onclick="startQuiz()">Main Ulang</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav id="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('materi', this)">
+            <i class="fas fa-book"></i>
+            <span>Materi</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('games', this)">
+            <i class="fas fa-gamepad"></i>
+            <span>Games</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('soal', this)">
+            <i class="fas fa-pencil-alt"></i>
+            <span>Latihan</span>
+        </div>
+    </nav>
+
+    <!-- Modal Game Area -->
+    <div id="game-modal">
+        <div class="modal-header">
+            <span id="modal-title">Level 1</span>
+            <button class="close-btn" onclick="closeGame()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="game-instruction" id="g-inst">Instruksi</div>
+            <div class="game-workspace" id="g-workspace"></div>
+            <div id="game-status"></div>
+            <button class="btn hidden" id="g-next-btn" onclick="nextGame()">Level Selanjutnya</button>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. KONFIGURASI SUPABASE ---
     const supabaseUrl = 'https://ipxpbyajakjleqfcznzw.supabase.co'; // GANTI DENGAN URL KAMU
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlweHBieWFqYWtqbGVxZmN6bnp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0Mjk3NTEsImV4cCI6MjEwMjAwNTc1MX0.7cwqdI3fUFco9Z43qBeqKdlTJr6Ylm91M30Uk3WQ_Vg'; // GANTI DENGAN ANON KEY KAMU
-    
-    // Variabel menggunakan nama supabaseClient agar tidak error
-    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-    // ==========================================
-    // 2. DATA SISWA & LOGIKA LOGIN
-    // ==========================================
-    let studentData = {
-        nama: "",
-        kelas: ""
-    };
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-    function mulaiBelajar() {
-        const namaInput = document.getElementById("namaSiswa").value;
-        const kelasInput = document.getElementById("kelasSiswa").value;
+        // --- 2. IDENTITAS SISWA ---
+        let studentData = { nama: "", kelas: "" };
 
-        if (namaInput.trim() === "" || kelasInput === "") {
-            alert("Harap isi Nama dan Kelas terlebih dahulu!");
-            return;
+        function simpanIdentitas() {
+            const nama = document.getElementById('namaSiswa').value.trim();
+            const kelas = document.getElementById('kelasSiswa').value;
+
+            if (!nama || !kelas) {
+                alert("Harap isi Nama dan Kelas terlebih dahulu!");
+                return;
+            }
+
+            studentData.nama = nama;
+            studentData.kelas = kelas;
+
+            document.getElementById('user-display').innerText = `${studentData.nama} (${studentData.kelas})`;
+            document.getElementById('identity-modal').style.display = 'none';
         }
 
-        // Simpan data
-        studentData.nama = namaInput;
-        studentData.kelas = kelasInput;
+        // --- 3. NAVIGASI TAB ---
+        function switchTab(tabId, el) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            el.classList.add('active');
+            window.scrollTo(0,0);
 
-        // Tampilkan di UI
-        document.getElementById("displayNama").innerText = studentData.nama;
-        document.getElementById("displayKelas").innerText = studentData.kelas;
-
-        // Pindah ke konten utama
-        document.getElementById("login-section").style.display = "none";
-        document.getElementById("main-content").style.display = "block";
-    }
-
-    // ==========================================
-    // 3. LOGIKA TAB MENU
-    // ==========================================
-    function openTab(evt, tabName) {
-        let i, tabcontent, tablinks;
-        
-        tabcontent = document.getElementsByClassName("tab-content");
-        for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";
-            tabcontent[i].classList.remove("active");
-        }
-        
-        tablinks = document.getElementsByClassName("tab-btn");
-        for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-        
-        document.getElementById(tabName).style.display = "block";
-        document.getElementById(tabName).classList.add("active");
-        evt.currentTarget.className += " active";
-    }
-
-    // ==========================================
-    // 4. LOGIKA KUIS & KIRIM DATA
-    // ==========================================
-    async function submitKuis() {
-        const q1 = document.querySelector('input[name="q1"]:checked');
-        const q2 = document.querySelector('input[name="q2"]:checked');
-
-        if (!q1 || !q2) {
-            alert("Harap jawab semua pertanyaan sebelum mengirim!");
-            return;
+            if(tabId === 'soal' && currentQuiz === 0 && score === 0) {
+                startQuiz();
+            }
         }
 
-        const score = parseInt(q1.value) + parseInt(q2.value);
-        document.getElementById("loading").style.display = "block";
+        // --- 4. ACCORDION MATERI ---
+        function toggleAccordion(el) {
+            el.classList.toggle('active');
+            let body = el.nextElementSibling;
+            if (body.style.maxHeight) {
+                body.style.maxHeight = null;
+            } else {
+                body.style.maxHeight = body.scrollHeight + "px";
+            }
+        }
 
-        await sendScoreToSupabase(score);
-    }
+        // --- 5. GAME ENGINE & DATA ---
+        const gamesData = [
+            // DEKOMPOSISI
+            { cat: "Dekomposisi", lvl: 1, icon: "fa-bicycle", title: "Membongkar Benda", type: "select", inst: "Pilih 3 bagian yang merupakan pecahan dari sebuah SEPEDA!", items: ["Ban", "Mesin", "Sadel", "Setir", "Knalpot"], answer: ["Ban", "Sadel", "Setir"] },
+            { cat: "Dekomposisi", lvl: 2, icon: "fa-clock", title: "Jadwal Pagi", type: "sequence", inst: "Urutkan pecahan aktivitas pagi dari bangun tidur!", items: ["Sarapan", "Bangun Tidur", "Berangkat Sekolah", "Mandi"], answer: ["Bangun Tidur", "Mandi", "Sarapan", "Berangkat Sekolah"] },
+            { cat: "Dekomposisi", lvl: 3, icon: "fa-store", title: "Kantin Sekolah", type: "select", inst: "Pilih sub-sistem/bagian utama untuk mengelola Kantin!", items: ["Kasir", "Satpam", "Dapur", "Pelayan", "Tukang Kebun"], answer: ["Kasir", "Dapur", "Pelayan"] },
+            { cat: "Dekomposisi", lvl: 4, icon: "fa-book-reader", title: "Proyek Perpus", type: "mcq", inst: "Saat memecah proyek Perpustakaan, mana yang BUKAN merupakan tugas khusus perpustakaan?", items: ["Data Buku", "Pendaftaran Anggota", "Denda Keterlambatan", "Jadwal Piket Kelas"], answer: "Jadwal Piket Kelas" },
+            // POLA
+            { cat: "Pengenalan Pola", lvl: 1, icon: "fa-palette", title: "Pola Warna", type: "mcq", inst: "Merah - Hijau - Kuning - Biru - Merah - Hijau - ... Warna selanjutnya?", items: ["Kuning", "Biru", "Merah", "Hitam"], answer: "Kuning" },
+            { cat: "Pengenalan Pola", lvl: 2, icon: "fa-sort-numeric-up", title: "Deret Angka", type: "mcq", inst: "1, 4, 9, 16, 25... Pola kuadrat! Berapa angka ke-8?", items: ["36", "49", "64", "81"], answer: "64" },
+            { cat: "Pengenalan Pola", lvl: 3, icon: "fa-key", title: "Pola Sandi", type: "mcq", inst: "Jika A=B, B=C. Maka sandi 'BOLA' menjadi 'CPMB'. Jika kata 'BUDI', sandinya menjadi?", items: ["CVEJ", "ATCH", "CVFK", "BVEJ"], answer: "CVEJ" },
+            { cat: "Pengenalan Pola", lvl: 4, icon: "fa-car", title: "Misteri Parkir", type: "mcq", inst: "Senin: Parkir No 2 Kosong. Selasa: No 4 Kosong. Rabu: No 6 Kosong. Kamis: No 8 Kosong. Jumat, parkiran nomor berapa yang kosong?", items: ["9", "10", "12", "7"], answer: "10" },
+            // ABSTRAKSI
+            { cat: "Abstraksi", lvl: 1, icon: "fa-filter", title: "Filter Kata", type: "select", inst: "Soal: Budi berbaju merah membeli 5 apel di Toko Maju seharga 10.000. Pilih kata yang BISA DIABAIKAN untuk menghitung harga!", items: ["Berbaju merah", "5 apel", "Toko Maju", "10.000"], answer: ["Berbaju merah", "Toko Maju"] },
+            { cat: "Abstraksi", lvl: 2, icon: "fa-map-marked-alt", title: "Rute Angkot", type: "mcq", inst: "Dalam membuat peta digital rute bus, informasi apa yang harus DIBUANG (diabstraksi) agar peta mudah dibaca?", items: ["Nama Halte", "Jalur Jalan Raya", "Warna Cat Rumah Penduduk", "Titik Berhenti"], answer: "Warna Cat Rumah Penduduk" },
+            { cat: "Abstraksi", lvl: 3, icon: "fa-database", title: "Basis Data", type: "mcq", inst: "Admin sekolah membuat Basis Data Nilai Rapor. Data apa yang harus diabaikan?", items: ["Nama Siswa", "NISN", "Nilai Matematika", "Makanan Favorit"], answer: "Makanan Favorit" },
+            { cat: "Abstraksi", lvl: 4, icon: "fa-search", title: "Fungsi Simbol", type: "mcq", inst: "Simbol 'Kaca Pembesar' di HP adalah bentuk abstraksi dari fungsi...", items: ["Menghapus Data", "Mencari Data", "Memperbesar Layar", "Menyimpan Foto"], answer: "Mencari Data" },
+            // ALGORITMA
+            { cat: "Algoritma", lvl: 1, icon: "fa-desktop", title: "Nyalakan PC", type: "sequence", inst: "Urutkan algoritma menyalakan komputer!", items: ["Tunggu Booting", "Tekan Power CPU", "Colok Kabel Listrik", "Tekan Power Monitor"], answer: ["Colok Kabel Listrik", "Tekan Power Monitor", "Tekan Power CPU", "Tunggu Booting"] },
+            { cat: "Algoritma", lvl: 2, icon: "fa-tshirt", title: "Cuci Baju", type: "sequence", inst: "Urutkan algoritma mencuci baju pakai mesin!", items: ["Masukkan Deterjen", "Pisahkan Baju Luntur", "Isi Air", "Putar Mesin"], answer: ["Pisahkan Baju Luntur", "Isi Air", "Masukkan Deterjen", "Putar Mesin"] },
+            { cat: "Algoritma", lvl: 3, icon: "fa-robot", title: "Robot Pembersih", type: "sequence", inst: "Robot harus ambil sampah terdekat dulu. Jarak: Kertas(2m), Plastik(5m), Daun(1m), Kaleng(3m). Urutkan yang diambil!", items: ["Plastik", "Kertas", "Daun", "Kaleng"], answer: ["Daun", "Kertas", "Kaleng", "Plastik"] },
+            { cat: "Algoritma", lvl: 4, icon: "fa-route", title: "Kurir", type: "mcq", inst: "Paket di Titik B dan C. Jarak: A-B (2km), B-C (1km), A-C (5km). Rute mana yang algoritmanya paling efisien dari A?", items: ["A -> C -> B", "A -> B -> C", "A -> B -> A -> C", "C -> B -> A"], answer: "A -> B -> C" }
+        ];
 
-    async function sendScoreToSupabase(score) {
-        const { error } = await supabaseClient
-            .from('nilai_siswa')
-            .insert([
-                {
-                    nama: studentData.nama,
-                    kelas: studentData.kelas,
-                    skor: score
+        let unlockedLevel = 0; 
+        let currentGameIndex = 0;
+        let gameState = {};
+
+        function renderGamesMenu() {
+            const container = document.getElementById('games-container');
+            container.innerHTML = '';
+            
+            let currentCat = '';
+            let gridHTML = '';
+
+            gamesData.forEach((game, index) => {
+                if(game.cat !== currentCat) {
+                    if(currentCat !== '') gridHTML += `</div>`;
+                    currentCat = game.cat;
+                    gridHTML += `<h3 class="game-category-title">${currentCat}</h3><div class="games-grid">`;
                 }
-            ]);
 
-        document.getElementById("loading").style.display = "none";
-
-        if (error) {
-            console.error("Gagal mengirim data:", error.message);
-            alert("Gagal mengirim nilai. Error: " + error.message);
-        } else {
-            alert("Kuis selesai! Skor kamu: " + score + "\nData berhasil disimpan ke database Supabase.");
-            document.getElementById("quizForm").reset();
+                let isLocked = index > unlockedLevel;
+                let lockIcon = isLocked ? '<i class="fas fa-lock"></i>' : `<i class="fas ${game.icon}"></i>`;
+                
+                gridHTML += `
+                    <div class="game-card ${isLocked ? 'locked' : ''}" onclick="openGame(${index})">
+                        ${lockIcon}
+                        <div class="lvl">Level ${game.lvl}</div>
+                        <div style="font-size: 0.9rem; font-weight:700; margin-top:5px;">${game.title}</div>
+                    </div>
+                `;
+            });
+            gridHTML += `</div>`;
+            container.innerHTML = gridHTML;
         }
-    }
-</script>
 
+        function openGame(index) {
+            if(index > unlockedLevel) return;
+            currentGameIndex = index;
+            const game = gamesData[index];
+            gameState = { selected: [], sequence: [] };
+            
+            document.getElementById('modal-title').innerText = `${game.cat} - Lvl ${game.lvl}`;
+            document.getElementById('g-inst').innerText = game.inst;
+            document.getElementById('g-next-btn').classList.add('hidden');
+            document.getElementById('game-status').innerText = '';
+            document.getElementById('game-status').style.color = 'var(--text)';
+            
+            const ws = document.getElementById('g-workspace');
+            ws.innerHTML = '';
+
+            let itemsToRender = [...game.items];
+            if(game.type === 'sequence') {
+                itemsToRender.sort(() => Math.random() - 0.5);
+            }
+
+            itemsToRender.forEach((item) => {
+                let div = document.createElement('div');
+                div.className = 'game-item';
+                div.innerText = item;
+                div.onclick = () => handleGameClick(div, item, game);
+                ws.appendChild(div);
+            });
+
+            document.getElementById('game-modal').classList.add('active');
+        }
+
+        function handleGameClick(el, item, game) {
+            if(el.classList.contains('correct') || el.classList.contains('wrong')) return;
+            
+            let status = document.getElementById('game-status');
+
+            if(game.type === 'mcq') {
+                document.querySelectorAll('.game-item').forEach(d => d.style.pointerEvents = 'none');
+                if(item === game.answer) {
+                    el.classList.add('correct');
+                    winGame();
+                } else {
+                    el.classList.add('wrong');
+                    status.innerText = "Salah! Coba lagi.";
+                    status.style.color = "var(--accent)";
+                    setTimeout(() => openGame(currentGameIndex), 1000);
+                }
+            } 
+            else if (game.type === 'select') {
+                el.classList.toggle('selected');
+                let idx = gameState.selected.indexOf(item);
+                if(idx > -1) gameState.selected.splice(idx, 1);
+                else gameState.selected.push(item);
+
+                if(gameState.selected.length === game.answer.length) {
+                    let isWin = gameState.selected.every(v => game.answer.includes(v));
+                    if(isWin) {
+                        document.querySelectorAll('.game-item.selected').forEach(d => d.classList.add('correct'));
+                        winGame();
+                    } else {
+                        status.innerText = "Ada yang kurang tepat!";
+                        status.style.color = "var(--accent)";
+                        setTimeout(() => openGame(currentGameIndex), 1500);
+                    }
+                }
+            }
+            else if (game.type === 'sequence') {
+                if(el.classList.contains('selected')) return;
+                
+                let targetIdx = gameState.sequence.length;
+                if(item === game.answer[targetIdx]) {
+                    el.classList.add('correct');
+                    el.classList.add('selected');
+                    el.innerHTML = `<span>${targetIdx + 1}. ${item}</span>`;
+                    gameState.sequence.push(item);
+                    if(gameState.sequence.length === game.answer.length) winGame();
+                } else {
+                    el.classList.add('wrong');
+                    status.innerText = "Urutan salah!";
+                    status.style.color = "var(--accent)";
+                    setTimeout(() => openGame(currentGameIndex), 1000);
+                }
+            }
+        }
+
+        function winGame() {
+            let status = document.getElementById('game-status');
+            status.innerText = "Bagus Sekali! Tepat!";
+            status.style.color = "var(--success)";
+            
+            if(currentGameIndex === unlockedLevel && unlockedLevel < gamesData.length - 1) {
+                unlockedLevel++;
+                renderGamesMenu();
+            }
+            
+            if(currentGameIndex < gamesData.length - 1) {
+                document.getElementById('g-next-btn').classList.remove('hidden');
+            } else {
+                status.innerText = "Selamat! Semua Game Selesai!";
+            }
+        }
+
+        function closeGame() { document.getElementById('game-modal').classList.remove('active'); }
+        function nextGame() { openGame(currentGameIndex + 1); }
+
+        renderGamesMenu();
+
+        // --- 6. LATIHAN SOAL (QUIZ) & KIRIM SUPABASE ---
+        const quizData = [
+            { q: "Membagi masalah antrean di bank menjadi bagian Teller, CS, dan Satpam disebut?", o: ["Dekomposisi", "Abstraksi", "Algoritma", "Pengenalan Pola"], a: 0 },
+            { q: "Dokter melihat gejala batuk, pilek, demam pada pasien. Ia ingat pola ini mirip pasien sebelumnya yang sakit flu. Ini adalah...", o: ["Dekomposisi", "Pengenalan Pola", "Abstraksi", "Algoritma"], a: 1 },
+            { q: "Dalam soal 'Andi berbaju biru membeli 3 permen seharga Rp3.000'. Informasi yang harus diabstraksi (diabaikan) adalah...", o: ["3 permen", "Rp3.000", "Membeli permen", "Andi berbaju biru"], a: 3 },
+            { q: "Langkah-langkah yang logis dan terurut untuk membuat teh manis panas disebut...", o: ["Pengenalan Pola", "Dekomposisi", "Algoritma", "Abstraksi"], a: 2 },
+            { q: "Kamu menyusun panitia kelas menjadi Ketua, Sekretaris, dan Bendahara. Ini menerapkan pilar...", o: ["Dekomposisi", "Algoritma", "Abstraksi", "Pengenalan Pola"], a: 0 },
+            { q: "Lampu merah menyala berurutan: Merah, Kuning, Hijau, Merah, Kuning... Warna selanjutnya pasti?", o: ["Merah", "Kuning", "Hijau", "Biru"], a: 2 },
+            { q: "Saat melihat peta rute TransJakarta, peta tersebut tidak menampilkan rumah penduduk karena menerapkan prinsip...", o: ["Abstraksi", "Dekomposisi", "Algoritma", "Pengenalan Pola"], a: 0 },
+            { q: "Jika robot diprogram: Maju 2 langkah, Belok Kanan, Maju 1 Langkah. Urutan instruksi ini disebut...", o: ["Abstraksi", "Dekomposisi", "Pengenalan Pola", "Algoritma"], a: 3 },
+            { q: "Merakit komputer dipecah menjadi memasang Motherboard, RAM, dan Hardisk. Ini adalah contoh...", o: ["Pengenalan Pola", "Algoritma", "Abstraksi", "Dekomposisi"], a: 3 },
+            { q: "Nomor antrean klinik: A1, A2, A3, B1, B2, B3... Setelah B3, kemungkinan besar adalah?", o: ["B4", "A4", "C1", "C3"], a: 2 },
+            { q: "Bentuk ikon 'Tong Sampah' di komputer untuk menghapus file adalah contoh dari...", o: ["Dekomposisi", "Abstraksi", "Algoritma", "Pengenalan Pola"], a: 1 },
+            { q: "Sensor suhu AC menyalakan kompresor jika suhu > 25 derajat, dan mematikan jika < 20 derajat. Ini bentuk dari...", o: ["Algoritma", "Dekomposisi", "Pengenalan Pola", "Abstraksi"], a: 0 },
+            { q: "Membagi masalah polusi udara kota menjadi asap pabrik dan asap kendaraan bermotor adalah contoh...", o: ["Algoritma", "Abstraksi", "Pengenalan Pola", "Dekomposisi"], a: 3 },
+            { q: "Penjual tahu bahwa setiap hari Senin es krim selalu habis cepat dibanding hari lain. Penjual menggunakan...", o: ["Pengenalan Pola", "Dekomposisi", "Algoritma", "Abstraksi"], a: 0 },
+            { q: "Dalam membuat sistem absensi sidik jari, sistem hanya menyimpan pola garis tangan, bukan warna kulit. Ini disebut...", o: ["Dekomposisi", "Abstraksi", "Pengenalan Pola", "Algoritma"], a: 1 },
+            { q: "Urutan yang benar untuk login email: 1.Masukkan Password, 2.Klik Login, 3.Buka Web, 4.Masukkan Email.", o: ["3-4-1-2", "3-1-4-2", "1-2-3-4", "4-1-2-3"], a: 0 },
+            { q: "Mengelompokkan buku perpustakaan ke rak Sains, Sosial, dan Bahasa menggunakan prinsip...", o: ["Dekomposisi", "Abstraksi", "Algoritma", "Pengenalan Pola"], a: 0 },
+            { q: "Kata SANDI = UCPFK. Kata BUKU = DWMW. Pola yang digunakan adalah...", o: ["Mundur 2 huruf", "Maju 2 huruf", "Dibalik", "Diganti angka"], a: 1 },
+            { q: "Saat merekam suara, aplikasi noise reduction menghilangkan suara bising kipas angin. Proses membuang hal tidak penting ini adalah...", o: ["Pengenalan Pola", "Algoritma", "Abstraksi", "Dekomposisi"], a: 2 },
+            { q: "Menyusun puzzle 1000 keping dengan mencari pinggirannya terlebih dahulu lalu memisahkan berdasarkan warna adalah kombinasi dari...", o: ["Algoritma & Abstraksi", "Dekomposisi & Pola", "Hanya Dekomposisi", "Hanya Abstraksi"], a: 1 }
+        ];
+
+        let currentQuiz = 0;
+        let score = 0;
+
+        function startQuiz() {
+            if(!studentData.nama) {
+                document.getElementById('identity-modal').style.display = 'flex';
+                return;
+            }
+            currentQuiz = 0;
+            score = 0;
+            document.getElementById('quiz-area').style.display = 'flex';
+            document.getElementById('quiz-result').style.display = 'none';
+            loadQuiz();
+        }
+
+        function loadQuiz() {
+            let q = quizData[currentQuiz];
+            document.getElementById('q-current').innerText = currentQuiz + 1;
+            document.getElementById('q-score').innerText = score;
+            document.getElementById('q-text').innerText = q.q;
+            
+            let optsDiv = document.getElementById('q-options');
+            optsDiv.innerHTML = '';
+            
+            q.o.forEach((opt, index) => {
+                let btn = document.createElement('button');
+                btn.className = 'quiz-option';
+                btn.innerText = opt;
+                btn.onclick = () => selectQuizOption(index, q.a, btn);
+                optsDiv.appendChild(btn);
+            });
+        }
+
+        function selectQuizOption(selectedIndex, correctIndex, btnElement) {
+            document.querySelectorAll('.quiz-option').forEach(b => b.style.pointerEvents = 'none');
+
+            if(selectedIndex === correctIndex) {
+                btnElement.classList.add('correct');
+                score += 5; // Setiap soal bernilai 5 poin (Total 20 x 5 = 100)
+            } else {
+                btnElement.classList.add('wrong');
+                document.querySelectorAll('.quiz-option')[correctIndex].classList.add('correct');
+            }
+
+            setTimeout(() => {
+                currentQuiz++;
+                if(currentQuiz < quizData.length) {
+                    loadQuiz();
+                } else {
+                    finishQuiz();
+                }
+            }, 1000);
+        }
+
+        async function finishQuiz() {
+            document.getElementById('quiz-area').style.display = 'none';
+            document.getElementById('quiz-result').style.display = 'block';
+            document.getElementById('final-score').innerText = score;
+
+            let msg = score >= 75 ? "Luar Biasa! Pemahamanmu sangat baik!" : "Tetap semangat! Pelajari materi lagi yuk.";
+            document.getElementById('score-message').innerText = msg;
+            
+            document.getElementById('save-status').innerText = "Sedang menyimpan nilai ke database...";
+            
+            // Kirim ke Supabase
+            await sendScoreToSupabase(score);
+        }
+
+        async function sendScoreToSupabase(finalScore) {
+            const { error } = await supabaseClient
+                .from('nilai_siswa')
+                .insert([
+                    {
+                        nama: studentData.nama,
+                        kelas: studentData.kelas,
+                        skor: finalScore
+                    }
+                ]);
+
+            if (error) {
+                console.error("Gagal mengirim nilai:", error.message);
+                document.getElementById('save-status').innerText = "⚠️ Gagal menyimpan nilai: " + error.message;
+            } else {
+                document.getElementById('save-status').innerText = "✅ Nilai berhasil disimpan ke database!";
+            }
+        }
+    </script>
 </body>
 </html>
