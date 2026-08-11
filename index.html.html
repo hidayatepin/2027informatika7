@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Berpikir Komputasional</title>
+    <!-- FontAwesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Library Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --hover-color: #45a049;
+            --bg-color: #f4f7f6;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 {
+            text-align: center;
+            color: var(--primary-color);
+        }
+        /* Style Login */
+        #login-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        input, select, button {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: var(--hover-color);
+        }
+        /* Style Tabs */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .tab-btn {
+            background-color: #e0e0e0;
+            color: #333;
+            flex: 1;
+        }
+        .tab-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        /* Style Kuis */
+        .question {
+            margin-bottom: 15px;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .question p { margin-top: 0; font-weight: bold; }
+        .question label { display: block; margin-bottom: 8px; cursor: pointer; }
+        #loading { text-align: center; color: #666; font-style: italic; display: none; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- BAGIAN 1: FORM LOGIN SISWA -->
+    <div id="login-section">
+        <h1><i class="fa-solid fa-graduation-cap"></i> Selamat Datang!</h1>
+        <p style="text-align: center;">Silakan isi data diri sebelum mulai belajar.</p>
+        <input type="text" id="namaSiswa" placeholder="Masukkan Nama Lengkap" required>
+        <select id="kelasSiswa">
+            <option value="">-- Pilih Kelas --</option>
+            <option value="Kelas 7A">Kelas 7A</option>
+            <option value="Kelas 7B">Kelas 7B</option>
+            <option value="Kelas 7C">Kelas 7C</option>
+        </select>
+        <button type="button" onclick="mulaiBelajar()"><i class="fa-solid fa-play"></i> Mulai Belajar</button>
+    </div>
+
+    <!-- BAGIAN 2: KONTEN UTAMA (Disembunyikan sebelum login) -->
+    <div id="main-content" style="display: none;">
+        <h2>Modul: Berpikir Komputasional</h2>
+        <p style="text-align: center;">Halo, <span id="displayNama" style="font-weight:bold;"></span> dari <span id="displayKelas" style="font-weight:bold;"></span>!</p>
+        
+        <!-- Navigasi Tab -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="openTab(event, 'materi')"><i class="fa-solid fa-book"></i> Materi</button>
+            <button class="tab-btn" onclick="openTab(event, 'game')"><i class="fa-solid fa-gamepad"></i> Game</button>
+            <button class="tab-btn" onclick="openTab(event, 'kuis')"><i class="fa-solid fa-pen-to-square"></i> Kuis</button>
+        </div>
+
+        <!-- Konten Materi -->
+        <div id="materi" class="tab-content active">
+            <h3><i class="fa-solid fa-book-open"></i> Pengenalan Berpikir Komputasional</h3>
+            <p>Berpikir komputasional adalah metode menyelesaikan persoalan dengan menerapkan teknik ilmu komputer (informatika). Terdapat 4 fondasi utama:</p>
+            <ul>
+                <li><strong>Dekomposisi:</strong> Memecah masalah besar menjadi bagian kecil.</li>
+                <li><strong>Pengenalan Pola:</strong> Mencari kesamaan bentuk atau pola dari masalah.</li>
+                <li><strong>Abstraksi:</strong> Fokus pada informasi penting dan mengabaikan yang tidak relevan.</li>
+                <li><strong>Algoritma:</strong> Menyusun langkah-langkah terurut untuk menyelesaikan masalah.</li>
+            </ul>
+        </div>
+
+        <!-- Konten Game -->
+        <div id="game" class="tab-content">
+            <h3><i class="fa-solid fa-puzzle-piece"></i> Mini Game</h3>
+            <p>Susunlah algoritma sederhana! Anggap kamu sedang membuat teh manis. Manakah langkah pertama yang paling tepat?</p>
+            <button onclick="alert('Coba lagi! Ingat langkah paling awal.')">Menuangkan Gula</button>
+            <button onclick="alert('Tepat sekali! Ini adalah langkah pertama dari algoritma membuat teh.')">Menyiapkan Gelas dan Air Panas</button>
+            <button onclick="alert('Coba lagi! Airnya belum siap lho.')">Mengaduk Teh</button>
+        </div>
+
+        <!-- Konten Kuis -->
+        <div id="kuis" class="tab-content">
+            <h3><i class="fa-solid fa-list-check"></i> Uji Pemahamanmu</h3>
+            <form id="quizForm">
+                <div class="question">
+                    <p>1. Proses memecah masalah besar menjadi bagian-bagian kecil yang lebih mudah diselesaikan disebut...</p>
+                    <label><input type="radio" name="q1" value="50"> Dekomposisi</label>
+                    <label><input type="radio" name="q1" value="0"> Abstraksi</label>
+                    <label><input type="radio" name="q1" value="0"> Algoritma</label>
+                </div>
+                <div class="question">
+                    <p>2. Menyusun langkah-langkah yang berurutan dan logis untuk menyelesaikan masalah disebut...</p>
+                    <label><input type="radio" name="q2" value="50"> Algoritma</label>
+                    <label><input type="radio" name="q2" value="0"> Pengenalan Pola</label>
+                    <label><input type="radio" name="q2" value="0"> Dekomposisi</label>
+                </div>
+                <button type="button" onclick="submitKuis()"><i class="fa-solid fa-paper-plane"></i> Kirim Jawaban</button>
+                <div id="loading">Sedang mengirim nilai ke database...</div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ==========================================
+    // 1. KONFIGURASI SUPABASE
+    // ==========================================
+    const supabaseUrl = 'https://ipxpbyajakjleqfcznzw.supabase.co'; // GANTI DENGAN URL KAMU
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlweHBieWFqYWtqbGVxZmN6bnp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0Mjk3NTEsImV4cCI6MjEwMjAwNTc1MX0.7cwqdI3fUFco9Z43qBeqKdlTJr6Ylm91M30Uk3WQ_Vg'; // GANTI DENGAN ANON KEY KAMU
+    
+    // Variabel menggunakan nama supabaseClient agar tidak error
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+    // ==========================================
+    // 2. DATA SISWA & LOGIKA LOGIN
+    // ==========================================
+    let studentData = {
+        nama: "",
+        kelas: ""
+    };
+
+    function mulaiBelajar() {
+        const namaInput = document.getElementById("namaSiswa").value;
+        const kelasInput = document.getElementById("kelasSiswa").value;
+
+        if (namaInput.trim() === "" || kelasInput === "") {
+            alert("Harap isi Nama dan Kelas terlebih dahulu!");
+            return;
+        }
+
+        // Simpan data
+        studentData.nama = namaInput;
+        studentData.kelas = kelasInput;
+
+        // Tampilkan di UI
+        document.getElementById("displayNama").innerText = studentData.nama;
+        document.getElementById("displayKelas").innerText = studentData.kelas;
+
+        // Pindah ke konten utama
+        document.getElementById("login-section").style.display = "none";
+        document.getElementById("main-content").style.display = "block";
+    }
+
+    // ==========================================
+    // 3. LOGIKA TAB MENU
+    // ==========================================
+    function openTab(evt, tabName) {
+        let i, tabcontent, tablinks;
+        
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+            tabcontent[i].classList.remove("active");
+        }
+        
+        tablinks = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        
+        document.getElementById(tabName).style.display = "block";
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.className += " active";
+    }
+
+    // ==========================================
+    // 4. LOGIKA KUIS & KIRIM DATA
+    // ==========================================
+    async function submitKuis() {
+        const q1 = document.querySelector('input[name="q1"]:checked');
+        const q2 = document.querySelector('input[name="q2"]:checked');
+
+        if (!q1 || !q2) {
+            alert("Harap jawab semua pertanyaan sebelum mengirim!");
+            return;
+        }
+
+        const score = parseInt(q1.value) + parseInt(q2.value);
+        document.getElementById("loading").style.display = "block";
+
+        await sendScoreToSupabase(score);
+    }
+
+    async function sendScoreToSupabase(score) {
+        const { error } = await supabaseClient
+            .from('nilai_siswa')
+            .insert([
+                {
+                    nama: studentData.nama,
+                    kelas: studentData.kelas,
+                    skor: score
+                }
+            ]);
+
+        document.getElementById("loading").style.display = "none";
+
+        if (error) {
+            console.error("Gagal mengirim data:", error.message);
+            alert("Gagal mengirim nilai. Error: " + error.message);
+        } else {
+            alert("Kuis selesai! Skor kamu: " + score + "\nData berhasil disimpan ke database Supabase.");
+            document.getElementById("quizForm").reset();
+        }
+    }
+</script>
+
+</body>
+</html>
